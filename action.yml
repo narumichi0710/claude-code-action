@@ -44,6 +44,19 @@ inputs:
   anthropic_api_key:
     description: "Anthropic API key (required for direct API, not needed for Bedrock/Vertex)"
     required: false
+  use_oauth:
+    description: "Use OAuth authentication instead of API key"
+    required: false
+    default: "false"
+  claude_access_token:
+    description: "Claude OAuth access token"
+    required: false
+  claude_refresh_token:
+    description: "Claude OAuth refresh token"
+    required: false
+  claude_expires_at:
+    description: "Claude OAuth token expiration timestamp"
+    required: false
   github_token:
     description: "GitHub token with repo and pull request permissions (optional if using GitHub App)"
     required: false
@@ -98,7 +111,7 @@ runs:
     - name: Run Claude Code
       id: claude-code
       if: steps.prepare.outputs.contains_trigger == 'true'
-      uses: anthropics/claude-code-base-action@c8e31bd52d9a149b3f8309d7978c6edaa282688d # v0.0.8
+      uses: narumichi0710/claude-code-base-action@main
       with:
         prompt_file: /tmp/claude-prompts/claude-prompt.txt
         allowed_tools: ${{ env.ALLOWED_TOOLS }}
@@ -109,6 +122,10 @@ runs:
         use_bedrock: ${{ inputs.use_bedrock }}
         use_vertex: ${{ inputs.use_vertex }}
         anthropic_api_key: ${{ inputs.anthropic_api_key }}
+        use_oauth: ${{ inputs.use_oauth }}
+        claude_access_token: ${{ inputs.claude_access_token }}
+        claude_refresh_token: ${{ inputs.claude_refresh_token }}
+        claude_expires_at: ${{ inputs.claude_expires_at }}
       env:
         # Model configuration
         ANTHROPIC_MODEL: ${{ inputs.model || inputs.anthropic_model }}
